@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitab.az - Öz Sevimli Kitabını Tap</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+     <header class="header">
+        <div class="container">
+            <div class="header-main">
+                <div class="logo">
+                    <h2>Kitab.az</h2>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Kitab axtar..." id="searchInput">
+                    <button onclick="searchBooks()">🔍</button>
+                </div>
+                <div class="user-actions">
+                    <span onclick="showLoginModal()" id="loginButton">👤 Daxil ol</span>
+                    <span onclick="showCart()">🛒 Səbət (<span id="cartCount">0</span>)</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <ul>
+                    <li><a href="#" onclick="showSection('home')">Əsas səhifə</a></li>
+                    <li><a href="#" onclick="showSection('unpaid')">Ödənişsiz Kitablar</a></li>
+                    <li><a href="#" onclick="showSection('paid')">Ödənişli Kitablar</a></li>
+                    <li><a href="#" onclick="showSection('about')">Haqqımızda</a></li>
+                    <li><a href="#" onclick="showSection('contact')">Əlaqə</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+ <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Öz Sevimli Kitabını Tap</h1>
+            <p>1000-lərlə elektron və çap kitablar. Ödənişsiz və ödənişli seçimlər.</p>
+            <button class="cta-button" onclick="showSection('unpaid')">İndi Kəşf Et</button>
+        </div>
+    </section>
+<section class="books-section" id="unpaid" style="display: none;">
+        <div class="container">
+            <h2>Ödənişsiz Kitablar</h2>
+            <div class="books-grid" id="freeBooks">
+                 </div>
+        </div>
+    </section>
+<section class="books-section" id="paid" style="display: none;">
+        <div class="container">
+            <h2>Ödənişli Kitablar</h2>
+            <div class="books-grid" id="paidBooks">
+                  </div>
+        </div>
+    </section>
+ <section class="reading-section" id="reading" style="display: none;">
+        <div class="container">
+            <div class="reader">
+                <div class="reader-header">
+                    <button onclick="goBack()">← Geri</button>
+                    <h3 id="currentBookTitle">Kitab Oxuyur</h3>
+                    <div class="reader-controls">
+                        <button onclick="decreaseFontSize()">A-</button>
+                        <button onclick="increaseFontSize()">A+</button>
+                        <button onclick="toggleTheme()">🌙</button>
+                    </div>
+                </div>
+                <div class="reader-content" id="readerContent">
+                    <p>Kitab məzmunu burada görünəcək...</p>
+                </div>
+                <div class="reader-footer">
+                    <button onclick="previousPage()">← Əvvəlki</button>
+                    <span id="pageInfo">Səhifə 1 / 10</span>
+                    <button onclick="nextPage()">Növbəti →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+ <section class="about-section" id="about" style="display: none;">
+        <div class="container">
+            <h2>Haqqımızda</h2>
+            <div class="about-content">
+                <p>Kitab.az Azərbaycanın ən böyük onlayn kitab platformasıdır. Biz oxucularımıza yüksək keyfiyyətli kitablar təqdim edirik.</p>
+                <div class="features">
+                    <div class="feature">
+                        <h3>📚 Geniş Seçim</h3>
+                        <p>Minlərlə kitab müxtəlif janrlarda</p>
+                    </div>
+                    <div class="feature">
+                        <h3>💰 Əlverişli Qiymətlər</h3>
+                        <p>Həm pulsuz, həm də uyğun qiymətli kitablar</p>
+                    </div>
+                    <div class="feature">
+                        <h3>📱 Mobil Uyğun</h3>
+                        <p>İstənilən cihazda oxuyun</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ <section class="contact-section" id="contact" style="display: none;">
+        <div class="container">
+            <h2>Əlaqə</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Bizimlə Əlaqə</h3>
+                    <p>📧 info@kitab.az</p>
+                    <p>📞 +994 12 345 67 89</p>
+                    <p>📍 Bakı, Azərbaycan</p>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="Adınız" required>
+                    <input type="email" placeholder="E-mail" required>
+                    <textarea placeholder="Mesajınız" rows="5" required></textarea>
+                    <button type="submit">Göndər</button>
+                </form>
+            </div>
+        </div>
+    </section>
+ <div class="modal" id="loginModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Daxil ol</h3>
+                <button onclick="closeLoginModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label>E-mail:</label>
+                        <input type="email" id="loginEmail" placeholder="E-mail ünvanınızı daxil edin" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Şifrə:</label>
+                        <input type="password" id="loginPassword" placeholder="Şifrənizi daxil edin" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">Daxil ol</button>
+                </form>
+                <div class="divider">və ya</div>
+                <button onclick="showRegisterForm()" class="btn btn-secondary full-width">Qeydiyyatdan keç</button>
+            </div>
+        </div>
+    </div>
+<div class="modal" id="registerModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Qeydiyyat</h3>
+                <button onclick="closeRegisterModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form class="register-form" id="registerForm">
+                    <div class="form-group">
+                        <label>Ad və Soyad:</label>
+                        <input type="text" id="registerName" placeholder="Ad və soyadınızı daxil edin" required>
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail:</label>
+                        <input type="email" id="registerEmail" placeholder="E-mail ünvanınızı daxil edin" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Şifrə:</label>
+                        <input type="password" id="registerPassword" placeholder="Şifrənizi daxil edin" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Şifrəni təsdiq et:</label>
+                        <input type="password" id="confirmPassword" placeholder="Şifrənizi təkrar daxil edin" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary full-width">Qeydiyyatdan keç</button>
+                </form>
+                <div class="divider">və ya</div>
+                <button onclick="showLoginModal()" class="btn btn-secondary full-width">Artıq hesabınız var? Daxil ol</button>
+            </div>
+        </div>
+    </div>
+ <div class="modal" id="cartModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Səbət</h3>
+                <button onclick="closeCart()">&times;</button>
+            </div>
+            <div class="modal-body" id="cartItems">
+                <p>Səbət boşdur</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="checkout()">Ödəniş et</button>
+            </div>
+        </div>
+    </div>
+  <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Kitab.az</h3>
+                    <p>Azərbaycanın ən böyük kitab platforması</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Sürətli Linklər</h4>
+                    <ul>
+                        <li><a href="#" onclick="showSection('home')">Ana səhifə</a></li>
+                        <li><a href="#" onclick="showSection('unpaid')">Pulsuz kitablar</a></li>
+                        <li><a href="#" onclick="showSection('paid')">Ödənişli kitablar</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Dəstək</h4>
+                    <ul>
+                        <li><a href="#" onclick="showSection('about')">Haqqımızda</a></li>
+                        <li><a href="#" onclick="showSection('contact')">Əlaqə</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Kitab.az. Bütün hüquqlar qorunur.</p>
+            </div>
+        </div>
+    </footer>
+ <script src="script.js"></script>
+</body>
+</html>
