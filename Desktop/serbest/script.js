@@ -219,3 +219,187 @@ function logout() {
 function checkLoginStatus() {
     updateLoginButton();
 }
+function showSection(sectionName) {
+    const sections = ['home', 'unpaid', 'paid', 'reading', 'about', 'contact'];
+    sections.forEach(section => {
+        const element = document.getElementById(section);
+        if (element) {
+            element.style.display = 'none';
+        }
+    });
+    dS
+    const selecteection = document.getElementById(sectionName);
+    if (selectedSection) {
+        selectedSection.style.display = 'block';
+    }
+    
+    currentSection = sectionName;
+    
+    if (sectionName === 'unpaid' || sectionName === 'paid') {
+        loadBooks();
+    }
+}
+
+function loadBooks() {
+    const freeBooksContainer = document.getElementById('freeBooks');
+    const paidBooksContainer = document.getElementById('paidBooks');
+    
+    if (freeBooksContainer) {
+        freeBooksContainer.innerHTML = '';
+        freeBooks.forEach(book => {
+            freeBooksContainer.appendChild(createBookCard(book));
+        });
+    }
+    
+    if (paidBooksContainer) {
+        paidBooksContainer.innerHTML = '';
+        paidBooks.forEach(book => {
+            paidBooksContainer.appendChild(createBookCard(book));
+        });
+    }
+}
+
+function createBookCard(book) {
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    
+    card.innerHTML = `
+        <div class="book-cover">
+            📖 ${book.title}
+        </div>
+        <div class="book-info">
+            <h3>${book.title}</h3>
+            <div class="author">Müəllif: ${book.author}</div>
+            <div class="genre">${book.genre}</div>
+            <div class="price ${book.isFree ? 'free' : ''}">${book.price}</div>
+            <div class="book-actions">
+                <button class="btn btn-primary" onclick="readBook(${book.id})">
+                    Oxu
+                </button>
+                ${!book.isFree ? `<button class="btn btn-secondary" onclick="addToCart(${book.id})">Səbətə əlavə et</button>` : ''}
+            </div>
+        </div>
+    `;
+    
+    return card;
+}
+
+function searchBooks() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    if (!searchTerm) return;
+    
+    const allBooks = [...freeBooks, ...paidBooks];
+    const filteredBooks = allBooks.filter(book => 
+        book.title.toLowerCase().includes(searchTerm) ||
+        book.author.toLowerCase().includes(searchTerm) ||
+        book.genre.toLowerCase().includes(searchTerm)
+    );
+    
+    showSearchResults(filteredBooks);
+}
+
+function showSearchResults(books) {
+    let searchSection = document.getElementById('searchResults');
+    if (!searchSection) {
+        searchSection = document.createElement('section');
+        searchSection.id = 'searchResults';
+        searchSection.className = 'books-section';
+        document.body.appendChild(searchSection);
+    }
+    
+    searchSection.innerHTML = `
+        <div class="container">
+            <h2>Axtarış Nəticələri</h2>
+            <div class="books-grid" id="searchBooksGrid">
+            </div>
+        </div>
+    `;
+    
+    const searchGrid = document.getElementById('searchBooksGrid');
+    books.forEach(book => {
+        searchGrid.appendChild(createBookCard(book));
+    });
+    
+    showSection('searchResults');
+}
+
+function readBook(bookId) {
+    const allBooks = [...freeBooks, ...paidBooks];
+    const book = allBooks.find(b => b.id === bookId);
+    
+    if (!book) return;
+    
+    if (!book.isFree && !isPurchased(bookId)) {
+        alert('Bu kitabı oxumaq üçün əvvəlcə satın almalısınız!');
+        return;
+    }
+    
+    currentBook = book;
+    currentPage = 1;
+    totalPages = Math.ceil(book.content.length / 500);
+    
+    document.getElementById('currentBookTitle').textContent = book.title;
+    document.getElementById('readerContent').textContent = getPageContent(book.content, currentPage);
+    updatePageInfo();
+    
+    showSection('reading');
+}
+
+function getPageContent(fullContent, pageNumber) {
+    const wordsPerPage = 100;
+    const words = fullContent.split(' ');
+    const startIndex = (pageNumber - 1) * wordsPerPage;
+    const endIndex = startIndex + wordsPerPage;
+    return words.slice(startIndex, endIndex).join(' ');
+}
+
+function previousPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        document.getElementById('readerContent').textContent = getPageContent(currentBook.content, currentPage);
+        updatePageInfo();
+    }
+}
+
+function nextPage() {
+    if (currentPage < totalPages) {
+        currentPage++;
+        document.getElementById('readerContent').textContent = getPageContent(currentBook.content, currentPage);
+        updatePageInfo();
+    }
+}
+
+function updatePageInfo() {
+    document.getElementById('pageInfo').textContent = `Səhifə ${currentPage} / ${totalPages}`;
+}
+
+function increaseFontSize() {
+    fontSize += 2;
+    document.getElementById('readerContent').style.fontSize = fontSize + 'px';
+}
+
+function decreaseFontSize() {
+    if (fontSize > 12) {
+        fontSize -= 2;
+        document.getElementById('readerContent').style.fontSize = fontSize + 'px';
+    }
+}
+
+function toggleTheme() {
+    const readerContent = document.getElementById('readerContent');
+    isDarkTheme = !isDarkTheme;
+    
+    if (isDarkTheme) {
+        readerContent.style.background = '#2d3748';
+        readerContent.style.color = '#e2e8f0';
+    } else {
+        readerContent.style.background = 'white';
+        readerContent.style.color = '#333';
+    }
+}
+
+function goBack() {
+    if (currentSection === 'reading') {
+        showSection('unpaid');
+    }
+}
